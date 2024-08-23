@@ -114,7 +114,7 @@ tourSchema.pre(/^find/, function (next) {
 //     next();
 // });
 
-// AGGERATE middleware
+// AGGREGATE middleware
 tourSchema.pre('aggregate', function (next) {
     // console.log(this.pipeline());
     this.pipeline().unshift({

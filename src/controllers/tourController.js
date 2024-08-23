@@ -4,8 +4,7 @@ import Tour from './../models/tourModel.js';
 export const topCheapAlias = (req, res, next) => {
     req.query.limit = '5';
     req.query.sort = 'price,ratingsAverage';
-    req.query.fields =
-        'name,ratings,difficulty,summary,duration,price';
+    req.query.fields = 'name,ratings,difficulty,summary,duration,price';
 
     next();
 };
@@ -14,10 +13,7 @@ export const getAllTours = async (req, res) => {
     try {
         // Executing Query
 
-        const tours = await new APIFeatures(
-            req.query,
-            Tour.find()
-        )
+        const tours = await new APIFeatures(req.query, Tour.find())
             .filter()
             .sort()
             .limit()
@@ -42,8 +38,7 @@ export const getTour = async (req, res) => {
         console.log(req.params.id);
 
         const tour = await Tour.findById(req.params.id);
-        if (!tour)
-            throw new Error('The requested tour not found');
+        if (!tour) throw new Error('The requested tour not found');
         res.json({
             status: 'success',
             data: tour,
@@ -72,11 +67,10 @@ export const postTour = async (req, res) => {
 };
 export const updateTour = async (req, res) => {
     try {
-        const tour = await Tour.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            { new: true, runValidators: true }
-        );
+        const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
+            new: true,
+            runValidators: true,
+        });
         res.json({
             status: 'success',
             data: {
@@ -92,10 +86,8 @@ export const updateTour = async (req, res) => {
 };
 export const deleteTour = async (req, res) => {
     try {
-        const tour = await Tour.findByIdAndDelete(
-            req.params.id
-        );
-        console.log(tour);
+        const tour = await Tour.findByIdAndDelete(req.params.id);
+        // console.log(tour);
 
         res.status(204).json({
             status: 'success',
