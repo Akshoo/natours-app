@@ -6,8 +6,9 @@
     "type": "module",
     "scripts": {
         "start": "nodemon src/server.js",
-        "build": "set NODE_ENV=prod&& node src/server.js",
-        "debug": "ndb src/server.js"
+        "build": "set NODE_ENV=prod&& nodemon src/server.js",
+        "debug": "ndb src/server.js",
+        "debugProd": "set NODE_ENV=prod&& ndb src/server.js"
     },
     "author": "Akshay",
     "license": "ISC",

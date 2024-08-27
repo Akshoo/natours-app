@@ -32,6 +32,8 @@ export const getTour = catchAsync(async function (req, res, next) {
     // console.log(req.params.id);
 
     const tour = await Tour.findById(req.params.id);
+    console.log('tour found _______________________');
+    
 
     if (!tour) return next(new AppError('The requested tour not found', 404));
 

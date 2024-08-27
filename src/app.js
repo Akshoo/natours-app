@@ -25,10 +25,6 @@ app.use(`${BASE_URL}/users`, userRouter);
 
 // Handling ALL unhandled Routes
 app.all('*', (req, res, next) => {
-    // res.status(404).json({
-    //     status: 'fail',
-    //     message: `Cannot find ${req.url} on the server.`,
-    // });
     const err = new AppError(`Cannot find ${req.url} on the server.`, 404);
     next(err);
 });
