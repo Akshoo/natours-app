@@ -44,6 +44,7 @@ const tourSchema = new mongoose.Schema(
         price: {
             type: Number,
             required: [true, 'A tour must have a price'],
+            // unique: true,
         },
         priceDiscount: Number,
         difficulty: {
@@ -106,7 +107,7 @@ tourSchema.pre('save', function (next) {
 // tourSchema.pre('find', function (next) {
 tourSchema.pre(/^find/, function (next) {
     this.find({ secret: { $ne: true } });
-    this.start = Date.now();
+    // this.start = Date.now();
     next();
 });
 // tourSchema.post('find', function (docs, next) {

@@ -5,12 +5,7 @@ export default class APIFeatures {
     }
     filter() {
         let queryObj = { ...this.reqQuery };
-        const excludeFields = [
-            'sort',
-            'page',
-            'limit',
-            'fields',
-        ];
+        const excludeFields = ['sort', 'page', 'limit', 'fields'];
         excludeFields.forEach((fi) => {
             delete queryObj[fi];
         });
@@ -27,24 +22,17 @@ export default class APIFeatures {
     }
     sort() {
         if (this.reqQuery.sort) {
-            const sortFields = req.query.sort.replaceAll(
-                ',',
-                ' '
-            );
+            const sortFields = this.reqQuery.sort.replaceAll(',', ' ');
             this.query = this.query.sort(sortFields);
-        } else
-            this.query = this.query.sort(
-                'createdAt -ratingsAverage'
-            );
+        } else this.query = this.query.sort('createdAt -ratingsAverage');
 
         return this;
     }
     limit() {
         if (this.reqQuery.fields) {
-            const projectFields =
-                this.reqQuery.fields.replaceAll(',', ' ');
+            const projectFields = this.reqQuery.fields.replaceAll(',', ' ');
             this.query = this.query.select(projectFields);
-        } else this.query = this.query.select('-__v');
+        } else this.query = this.query.select('-__v -secret');
 
         return this;
     }
