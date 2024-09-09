@@ -107,7 +107,7 @@ tourSchema.pre('save', function (next) {
 // tourSchema.pre('find', function (next) {
 tourSchema.pre(/^find/, function (next) {
     this.find({ secret: { $ne: true } });
-    this.start = Date.now();
+    // this.start = Date.now();
     next();
 });
 // tourSchema.post('find', function (docs, next) {

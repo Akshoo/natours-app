@@ -6,17 +6,25 @@
     "type": "module",
     "scripts": {
         "start": "nodemon src/server.js",
-        "build": "set NODE_ENV=prod&& nodemon src/server.js",
+        "start:prod": "set NODE_ENV=prod&& nodemon src/server.js",
         "debug": "ndb src/server.js",
-        "debugProd": "set NODE_ENV=prod&& ndb src/server.js"
+        "debug:prod": "set NODE_ENV=prod&& ndb src/server.js"
     },
     "author": "Akshay",
     "license": "ISC",
     "dependencies": {
+        "bcrypt": "^5.1.1",
         "dotenv": "^16.4.5",
         "express": "^4.19.2",
+        "express-mongo-sanitize": "^2.2.0",
+        "express-rate-limit": "^7.4.0",
+        "helmet": "^7.1.0",
+        "jsonwebtoken": "^9.0.2",
         "mongoose": "^8.5.1",
         "morgan": "^1.10.0",
-        "slugify": "^1.6.6"
+        "nodemailer": "^6.9.15",
+        "slugify": "^1.6.6",
+        "validator": "^13.12.0",
+        "xss-clean": "^0.1.4"
     }
 }

@@ -20,6 +20,7 @@ export const getAllTours = catchAsync(async function (req, res) {
         .limit()
         .paginate().query;
 
+    console.log('hehehehehehe');
     // Sending Response
     res.json({
         status: 'success',
@@ -33,7 +34,6 @@ export const getTour = catchAsync(async function (req, res, next) {
 
     const tour = await Tour.findById(req.params.id);
     console.log('tour found _______________________');
-    
 
     if (!tour) return next(new AppError('The requested tour not found', 404));
 
