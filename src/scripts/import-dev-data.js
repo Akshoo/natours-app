@@ -8,22 +8,14 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const tours = JSON.parse(
-    fs.readFileSync(
-        `${__dirname}/../../dev-data/data/tours-simple.json`,
-        'utf8'
-    )
+    fs.readFileSync(`${__dirname}/../../dev-data/data/tours.json`, 'utf8')
 );
 
-const dbUri = process.env.DB_URI.replace(
-    '<PASSWORD>',
-    process.env.DB_PASSWORD
-);
+const dbUri = process.env.DB_URI.replace('<PASSWORD>', process.env.DB_PASSWORD);
 const init = async function () {
     try {
         await mongoose.connect(dbUri);
-        console.log(
-            'connection to database successfull from script'
-        );
+        console.log('connection to database successfull from script');
     } catch (err) {
         console.log(err);
     }

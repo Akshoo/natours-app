@@ -1,6 +1,7 @@
 import express from 'express';
 import * as tc from '../controllers/tourController.js';
 import * as ac from '../controllers/authController.js';
+import * as rc from '../controllers/reviewController.js';
 
 const tourRouter = express.Router();
 
@@ -15,5 +16,9 @@ tourRouter
     .get(tc.getTour)
     .patch(tc.updateTour)
     .delete(ac.protect, ac.restrictTo('admin', 'lead-guide'), tc.deleteTour);
+
+tourRouter
+    .route('/:tourId/reviews')
+    .post(ac.protect, ac.restrictTo('user'), rc.postReview);
 
 export default tourRouter;

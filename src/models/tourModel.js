@@ -52,7 +52,7 @@ const tourSchema = new mongoose.Schema(
             required: [true, 'A tour must have a difficulty'],
             enum: {
                 values: ['easy', 'difficult', 'hard'],
-                message: `difficulty can only be either 'easy', 'medium' or 'hard' `,
+                message: `difficulty can only be either 'easy', 'difficult' or 'hard' `,
             },
         },
         summary: {
@@ -66,7 +66,7 @@ const tourSchema = new mongoose.Schema(
         images: [String],
         createdAt: {
             type: Date,
-            default: Date.now(),
+            default: Date.now,
             select: false,
         },
         startDates: [Date],
@@ -77,18 +77,61 @@ const tourSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
+        //GeoJSON
+        startLocation: {
+            type: {
+                type: String,
+                default: 'Point',
+                enum: ['Point'],
+            },
+            coordinates: [Number],
+            address: String,
+            description: String,
+        },
+        locations: [
+            {
+                type: {
+                    type: String,
+                    default: 'Point',
+                    enum: ['Point'],
+                },
+                coordinates: [Number],
+                address: String,
+                description: String,
+                day: Number,
+            },
+        ],
+        guides: [
+            {
+                type: mongoose.Schema.ObjectId,
+                ref: 'user',
+            },
+        ],
     },
     {
+        virtuals: {
+            duraionWeeks: {
+                get() {
+                    return this.duration && this.duration / 7;
+                },
+            },
+            reviews: {
+                options: {
+                    ref: 'review',
+                    foreignField: 'tour',
+                    localField: '_id',
+                },
+            },
+            numReviews: {
+                get() {
+                    return this.reviews?.length;
+                },
+            },
+        },
         toJSON: { virtuals: true },
         toObject: { virtuals: true },
     }
 );
-
-tourSchema.virtual('durationWeeks').get(function () {
-    return this.duration / 7;
-});
-
-// DOCUMENT middleware or hook aka pre save hook
 
 // Runs before any document is saved ie .save() and .create()
 tourSchema.pre('save', function (next) {
@@ -97,32 +140,28 @@ tourSchema.pre('save', function (next) {
     });
     next();
 });
-// Runs after a document has been saved
-// tourSchema.post('save', function (doc, next) {
-//     console.log(doc);
-//     next();
-// });
 
 // QUERY middleware
-// tourSchema.pre('find', function (next) {
+
+//populating guides in tours
 tourSchema.pre(/^find/, function (next) {
-    this.find({ secret: { $ne: true } });
-    // this.start = Date.now();
+    if (!this._fields || 'guides' in this._fields)
+        this.populate({ path: 'guides', select: 'name photo email' });
+
     next();
 });
-// tourSchema.post('find', function (docs, next) {
-//     console.log(`Query took ${this.start - Date.now()}ms`);
-//     next();
-// });
+
+//deselecting secret tours
+tourSchema.pre(/^find/, function (next) {
+    this.find({ secret: { $ne: true } }).select('-secret -__v');
+    next();
+});
 
 // AGGREGATE middleware
 tourSchema.pre('aggregate', function (next) {
-    // console.log(this.pipeline());
     this.pipeline().unshift({
         $match: { secret: { $ne: true } },
     });
-    // this.match({ secret: { $ne: true } });
-    // this.group({ _id: null, num: { $sum: '$numTours' } });
     next();
 });
 

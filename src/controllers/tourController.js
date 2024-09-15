@@ -1,7 +1,7 @@
 import APIFeatures from '../utils/APIFeatures.js';
 import catchAsync from '../utils/catchAsync.js';
 import AppError from '../utils/AppError.js';
-import Tour from './../models/tourModel.js';
+import Tour from '../models/tourModel.js';
 
 export const topCheapAlias = (req, res, next) => {
     req.query.limit = '5';
@@ -14,13 +14,13 @@ export const topCheapAlias = (req, res, next) => {
 export const getAllTours = catchAsync(async function (req, res) {
     // Executing Query
 
+    // console.log(req.query);
     const tours = await new APIFeatures(req.query, Tour.find())
         .filter()
         .sort()
         .limit()
         .paginate().query;
 
-    console.log('hehehehehehe');
     // Sending Response
     res.json({
         status: 'success',
@@ -30,9 +30,11 @@ export const getAllTours = catchAsync(async function (req, res) {
 });
 
 export const getTour = catchAsync(async function (req, res, next) {
-    // console.log(req.params.id);
-
-    const tour = await Tour.findById(req.params.id);
+    const tour = await Tour.findById(req.params.id).populate({
+        path: 'reviews',
+        select: 'name description',
+        // populate: 'user',
+    });
     console.log('tour found _______________________');
 
     if (!tour) return next(new AppError('The requested tour not found', 404));

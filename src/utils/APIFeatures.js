@@ -32,7 +32,9 @@ export default class APIFeatures {
         if (this.reqQuery.fields) {
             const projectFields = this.reqQuery.fields.replaceAll(',', ' ');
             this.query = this.query.select(projectFields);
-        } else this.query = this.query.select('-__v -secret');
+        }
+        // else this.query = this.query.select('-__v -secret');
+        //.lean() will not return virtual properties; // __v and secret already removed in pre find hook
 
         return this;
     }

@@ -78,10 +78,11 @@ export const protect = catchAsync(async (req, res, next) => {
 });
 
 export const restrictTo = (...allowedRoles) => {
+    // this route must be protected
     return (req, res, next) => {
         const userRole = req.currentUser.role;
         if (!allowedRoles.includes(userRole))
-            next(`Permission denied, a ${userRole} acnnot acces this resource`);
+            next(`Permission denied, a ${userRole} cannot access this resource`);
 
         next();
     };

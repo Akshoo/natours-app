@@ -39,10 +39,14 @@ const userSchema = new mongoose.Schema({
         },
     },
     photo: String,
-    passwordChangedAt: Date,
+    passwordChangedAt: {
+        type: Date,
+        select: false,
+    },
     createdAt: {
         type: Date,
-        default: Date.now(),
+        default: Date.now,
+        select: false,
     },
     role: {
         type: String,
