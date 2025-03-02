@@ -2,29 +2,18 @@ import User from '../models/userModel.js';
 import AppError from '../utils/AppError.js';
 import catchAsync from '../utils/catchAsync.js';
 import filterObj from '../utils/filterObj.js';
+import { readAll, readOne, deleteOne, updateOne } from './handlerFactory.js';
 
-export const getAllUsers = catchAsync(async (req, res, next) => {
-    const users = await User.find();
-    res.status(200).json({
-        status: 'success',
-        results: users.length,
-        data: users,
-    });
-});
-export const getUser = catchAsync(async (req, res) => {
-    const user = await User.findById(req.params.id);
-    res.status(200).json({
-        status: 'success',
-        user,
-    });
-});
-export const postUser = catchAsync(async (req, res, next) => {
+export const getAllUsers = readAll(User);
+export const getUserById = readOne(User);
+
+export const createUser = catchAsync(async (req, res, next) => {
     res.status(500).json({
         status: 'fail',
         message: 'This route is not implemented yet...',
     });
 });
-export const updateUser = catchAsync(async (req, res, next) => {
+export const updateMe = catchAsync(async (req, res, next) => {
     // this route must be protected
     const user = req.currentUser;
     if (!user) return next(new AppError('Must be logged in to update user data', 501));
@@ -47,7 +36,7 @@ export const updateUser = catchAsync(async (req, res, next) => {
         updatedUser,
     });
 });
-export const deleteUser = catchAsync(async (req, res, next) => {
+export const deleteMe = catchAsync(async (req, res, next) => {
     //this route is protected
     const user = req.currentUser;
     if (!user) return next(new AppError('Must be logged in to update user data', 501));
@@ -60,3 +49,6 @@ export const deleteUser = catchAsync(async (req, res, next) => {
         duser,
     });
 });
+
+export const deleteUser = deleteOne(User);
+export const updateUser = updateOne(User);

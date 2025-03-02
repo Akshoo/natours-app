@@ -1,24 +1,23 @@
 import express from 'express';
 import * as tc from '../controllers/tourController.js';
 import * as ac from '../controllers/authController.js';
-import * as rc from '../controllers/reviewController.js';
+
+import reviewRouter from './reviewRoutes.js';
 
 const tourRouter = express.Router();
 
-tourRouter.route('/top-5-cheap').get(tc.topCheapAlias, tc.getAllTours);
+tourRouter.use('/:tourId/reviews', reviewRouter); // Nested Route for Reviews
 
+tourRouter.route('/top-5-cheap').get(tc.topCheapAlias, tc.getAllTours);
 tourRouter.route('/stats').get(tc.getStats);
+
 tourRouter.route('/plans/:year').get(tc.getPlan);
 
-tourRouter.route(`/`).get(ac.protect, tc.getAllTours).post(tc.postTour);
+tourRouter.route(`/`).get(ac.protect, tc.getAllTours).post(tc.createTour);
 tourRouter
     .route(`/:id`)
-    .get(tc.getTour)
+    .get(tc.getTourById)
     .patch(tc.updateTour)
     .delete(ac.protect, ac.restrictTo('admin', 'lead-guide'), tc.deleteTour);
-
-tourRouter
-    .route('/:tourId/reviews')
-    .post(ac.protect, ac.restrictTo('user'), rc.postReview);
 
 export default tourRouter;

@@ -1,19 +1,36 @@
 import catchAsync from '../utils/catchAsync.js';
 import filterObj from '../utils/filterObj.js';
 import AppError from '../utils/AppError.js';
+import APIFeatures from '../utils/APIFeatures.js';
 import Review from '../models/reviewModel.js';
+import { readOne, deleteOne, updateOne } from './handlerFactory.js';
 
-export const getAllUserReviews = catchAsync(async (req, res, next) => {});
+export const getAllReviews = catchAsync(async (req, res, next) => {
+    const tourId = req.params.tourId;
+    let filter = {};
+    if (tourId) filter = { tour: tourId };
 
-export const postReview = catchAsync(async (req, res, next) => {
-    // this route must be protected
-    const user = req.currentUser;
-    const reviewTourId = req.params.tourId;
-    if (!user) next(new AppError('Must be logged in to access this route', 501));
+    const reviews = await new APIFeatures(req.query, Review.find(filter))
+        .filter()
+        .sort()
+        .limit()
+        .paginate().query;
 
-    const newReviewObj = filterObj(req.body, 'tour', 'description', 'rating');
-    newReviewObj.user = user.id;
-    newReviewObj.tour = newReviewObj.tour || reviewTourId;
+    res.json({
+        status: 'success',
+        results: reviews.length,
+        reviews,
+    });
+});
+
+export const createReview = catchAsync(async (req, res, next) => {
+    // Allowing nested routes and non nested routes
+    const userId = req.body.user || req.currentUser.id;
+    const tourId = req.body.tour || req.params.tourId;
+
+    const newReviewObj = filterObj(req.body, 'tour', 'user', 'description', 'rating');
+    newReviewObj.user = userId;
+    newReviewObj.tour = tourId;
 
     const review = await Review.create(newReviewObj);
 
@@ -24,13 +41,6 @@ export const postReview = catchAsync(async (req, res, next) => {
     });
 });
 
-export const getReviewById = catchAsync(async (req, res, next) => {
-    const id = req.params.id;
-    const review = await Review.findById(id);
-    if (!review) next(new AppError('The requested review not found', 404));
-
-    res.status(200).json({
-        status: 'success',
-        review,
-    });
-});
+export const getReviewById = readOne(Review);
+export const deleteReview = deleteOne(Review);
+export const updateReview = updateOne(Review);

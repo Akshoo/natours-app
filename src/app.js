@@ -18,11 +18,11 @@ const __dirname = dirname(__filename);
 
 const BASE_URL = '/api/v1';
 const limiter = rateLimit({
-    windowMs: 1 * 60 * 60 * 1000,
+    windowMs: 1 * 60 * 60 * 1000, // 1 hour
     limit: 100,
     message: {
         status: 'fail',
-        message: 'Too many requestsm, try again after an hour...',
+        message: 'Too many requests, try again after an hour...',
     },
 });
 
@@ -35,9 +35,9 @@ app.use(xss());
 app.use(morgan('dev'));
 app.use(express.static(`${__dirname}/../public`));
 app.use(helmet());
+app.use(`${BASE_URL}`, limiter);
 
 // ROUTES
-app.use(`${BASE_URL}`, limiter);
 app.use(`${BASE_URL}/tours`, tourRouter);
 app.use(`${BASE_URL}/users`, userRouter);
 app.use(`${BASE_URL}/reviews`, reviewRouter);

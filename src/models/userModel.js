@@ -105,5 +105,5 @@ userSchema.methods.deletePasswordResetToken = async function () {
     // await this.save({ validateBeforeSave: false });
 };
 
-const User = new mongoose.model('user', userSchema);
+const User = mongoose.model('user', userSchema);
 export default User;

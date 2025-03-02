@@ -2,6 +2,7 @@ import APIFeatures from '../utils/APIFeatures.js';
 import catchAsync from '../utils/catchAsync.js';
 import AppError from '../utils/AppError.js';
 import Tour from '../models/tourModel.js';
+import { readAll, readOne, deleteOne, updateOne, createOne } from './handlerFactory.js';
 
 export const topCheapAlias = (req, res, next) => {
     req.query.limit = '5';
@@ -11,75 +12,16 @@ export const topCheapAlias = (req, res, next) => {
     next();
 };
 
-export const getAllTours = catchAsync(async function (req, res) {
-    // Executing Query
-
-    // console.log(req.query);
-    const tours = await new APIFeatures(req.query, Tour.find())
-        .filter()
-        .sort()
-        .limit()
-        .paginate().query;
-
-    // Sending Response
-    res.json({
-        status: 'success',
-        results: tours.length,
-        data: { tours },
-    });
+export const getAllTours = readAll(Tour);
+export const getTourById = readOne(Tour, {
+    path: 'reviews',
+    select: 'name description -tour',
 });
+export const createTour = createOne(Tour);
+export const updateTour = updateOne(Tour);
+export const deleteTour = deleteOne(Tour);
 
-export const getTour = catchAsync(async function (req, res, next) {
-    const tour = await Tour.findById(req.params.id).populate({
-        path: 'reviews',
-        select: 'name description',
-        // populate: 'user',
-    });
-    console.log('tour found _______________________');
-
-    if (!tour) return next(new AppError('The requested tour not found', 404));
-
-    res.json({
-        status: 'success',
-        data: tour,
-    });
-});
-
-export const postTour = catchAsync(async function (req, res) {
-    const tour = await Tour.create(req.body);
-    res.status(201).json({
-        status: 'success',
-        data: tour,
-    });
-});
-
-export const updateTour = catchAsync(async function (req, res, next) {
-    const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-        runValidators: true,
-    });
-    if (!tour) {
-        return next(new AppError('The requested tour not found', 404));
-    }
-    res.json({
-        status: 'success',
-        data: {
-            tour,
-        },
-    });
-});
-
-export const deleteTour = catchAsync(async function (req, res, next) {
-    const tour = await Tour.findByIdAndDelete(req.params.id);
-
-    if (!tour) return next(new AppError('The requested tour not found', 404));
-
-    res.status(204).json({
-        status: 'success',
-        message: 'tour deleted',
-    });
-});
-
+// Aggregation pipeline controller functions
 export const getStats = catchAsync(async function (req, res) {
     const stats = await Tour.aggregate([
         {
@@ -114,7 +56,6 @@ export const getStats = catchAsync(async function (req, res) {
 
 export const getPlan = catchAsync(async function (req, res) {
     const year = +req.params.year;
-    // console.log(req.params);
     const plan = await Tour.aggregate([
         {
             $unwind: '$startDates',

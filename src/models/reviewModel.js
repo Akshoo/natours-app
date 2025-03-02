@@ -1,7 +1,6 @@
-import { populate } from 'dotenv';
 import mongoose from 'mongoose';
 
-const reviewSchema = mongoose.Schema(
+const reviewSchema = new mongoose.Schema(
     {
         user: {
             type: mongoose.Schema.ObjectId,
@@ -34,19 +33,22 @@ const reviewSchema = mongoose.Schema(
 );
 
 reviewSchema.pre(/^find/, function (next) {
+    console.log('review pre hook');
+
+    this.select('-__v');
+
     this.populate({
         path: 'tour',
         select: 'name',
         // populate: { path: 'guides', select: 'name email' },
-    })
-        .populate({
-            path: 'user',
-            select: 'name photo',
-        })
-        .select('-tour');
+    }).populate({
+        path: 'user',
+        select: 'name photo',
+    });
 
     next();
 });
 
 const Review = mongoose.model('review', reviewSchema);
+
 export default Review;

@@ -2,13 +2,14 @@ import * as rc from '../controllers/reviewController.js';
 import * as ac from '../controllers/authController.js';
 import express from 'express';
 
-const reviewRouter = express.Router();
+// allow merge params to persist /:tourId param from tourRoute
+const reviewRouter = express.Router({ mergeParams: true });
 
 reviewRouter
     .route('/')
-    .get(ac.protect, rc.getAllUserReviews)
-    .post(ac.protect, ac.restrictTo('user'), rc.postReview);
+    .get(rc.getAllReviews)
+    .post(ac.protect, ac.restrictTo('user'), rc.createReview);
 
-reviewRouter.route('/:id').get(rc.getReviewById);
+reviewRouter.route('/:id').get(rc.getReviewById).delete(rc.deleteReview);
 
 export default reviewRouter;

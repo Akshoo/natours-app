@@ -24,7 +24,7 @@ export default class APIFeatures {
         if (this.reqQuery.sort) {
             const sortFields = this.reqQuery.sort.replaceAll(',', ' ');
             this.query = this.query.sort(sortFields);
-        } else this.query = this.query.sort('createdAt -ratingsAverage');
+        } else this.query = this.query.sort('createdAt');
 
         return this;
     }
