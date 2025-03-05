@@ -1,27 +1,10 @@
 import catchAsync from '../utils/catchAsync.js';
 import filterObj from '../utils/filterObj.js';
-import AppError from '../utils/AppError.js';
 import APIFeatures from '../utils/APIFeatures.js';
 import Review from '../models/reviewModel.js';
-import { readOne, deleteOne, updateOne } from './handlerFactory.js';
+import { readAll, readOne, deleteOne, updateOne } from './handlerFactory.js';
 
-export const getAllReviews = catchAsync(async (req, res, next) => {
-    const tourId = req.params.tourId;
-    let filter = {};
-    if (tourId) filter = { tour: tourId };
-
-    const reviews = await new APIFeatures(req.query, Review.find(filter))
-        .filter()
-        .sort()
-        .limit()
-        .paginate().query;
-
-    res.json({
-        status: 'success',
-        results: reviews.length,
-        reviews,
-    });
-});
+export const getAllReviews = readAll(Review);
 
 export const createReview = catchAsync(async (req, res, next) => {
     // Allowing nested routes and non nested routes

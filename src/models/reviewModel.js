@@ -1,4 +1,6 @@
 import mongoose from 'mongoose';
+import catchAsync from '../utils/catchAsync.js';
+import Tour from './tourModel.js';
 
 const reviewSchema = new mongoose.Schema(
     {
@@ -32,9 +34,10 @@ const reviewSchema = new mongoose.Schema(
     }
 );
 
-reviewSchema.pre(/^find/, function (next) {
-    console.log('review pre hook');
+//Might not work immediately
+reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
 
+reviewSchema.pre(/^find/, function (next) {
     this.select('-__v');
 
     this.populate({
@@ -47,6 +50,39 @@ reviewSchema.pre(/^find/, function (next) {
     });
 
     next();
+});
+
+reviewSchema.statics.calcAverageRatings = async function (tourId) {
+    const [stats] = await this.aggregate([
+        {
+            $match: { tour: tourId },
+        },
+        {
+            $group: {
+                _id: tourId,
+                ratingsAverage: { $avg: '$rating' },
+                ratingsQuantity: { $sum: 1 },
+            },
+        },
+    ]);
+
+    await Tour.findByIdAndUpdate(tourId, {
+        ratingsQuantity: stats.ratingsQuantity,
+        ratingsAverage: stats.ratingsAverage,
+    });
+};
+
+reviewSchema.post('save', function (next) {
+    this.constructor.calcAverageRatings(this.tour);
+});
+
+reviewSchema.pre(/^findOneAnd/, async function (next) {
+    this.rev = await this.model.findOne(this.getQuery());
+    console.log(this.getQuery());
+    next();
+});
+reviewSchema.post(/^findOneAnd/, async function () {
+    if (this.rev) this.r.constructor.calcAverageRatings(this.r.tour._id);
 });
 
 const Review = mongoose.model('review', reviewSchema);

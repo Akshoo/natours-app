@@ -4,19 +4,24 @@ import catchAsync from '../utils/catchAsync.js';
 import filterObj from '../utils/filterObj.js';
 import { readAll, readOne, deleteOne, updateOne } from './handlerFactory.js';
 
+export const getMe = (req, res, next) => {
+    req.params.id = req.currentUser.id;
+    next();
+};
+
 export const getAllUsers = readAll(User);
 export const getUserById = readOne(User);
 
 export const createUser = catchAsync(async (req, res, next) => {
     res.status(500).json({
         status: 'fail',
-        message: 'This route is not implemented yet...',
+        message: 'This route is not defined. Please use /signup instead',
     });
 });
 export const updateMe = catchAsync(async (req, res, next) => {
     // this route must be protected
     const user = req.currentUser;
-    if (!user) return next(new AppError('Must be logged in to update user data', 501));
+    // if (!user) return next(new AppError('Must be logged in to update user data', 501));
 
     // if user tries to change password, warn
     if (req.body.password || req.body.passwordConfirm)

@@ -1,6 +1,4 @@
-import APIFeatures from '../utils/APIFeatures.js';
 import catchAsync from '../utils/catchAsync.js';
-import AppError from '../utils/AppError.js';
 import Tour from '../models/tourModel.js';
 import { readAll, readOne, deleteOne, updateOne, createOne } from './handlerFactory.js';
 
@@ -15,7 +13,7 @@ export const topCheapAlias = (req, res, next) => {
 export const getAllTours = readAll(Tour);
 export const getTourById = readOne(Tour, {
     path: 'reviews',
-    select: 'name description -tour',
+    select: 'name description rating -tour',
 });
 export const createTour = createOne(Tour);
 export const updateTour = updateOne(Tour);

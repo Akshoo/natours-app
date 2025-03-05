@@ -96,12 +96,6 @@ export const signup = catchAsync(async (req, res, next) => {
         'password',
         'passwordConfirm'
     );
-    // const newUser = await User.create({
-    //     name: req.body.name,
-    //     email: req.body.email,
-    //     password: req.body.password,
-    //     passwordConfirm: req.body.passwordConfirm,
-    // });
     const newUser = await User.create(newUserObj);
 
     newUser.password = undefined;

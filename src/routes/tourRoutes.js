@@ -11,13 +11,18 @@ tourRouter.use('/:tourId/reviews', reviewRouter); // Nested Route for Reviews
 tourRouter.route('/top-5-cheap').get(tc.topCheapAlias, tc.getAllTours);
 tourRouter.route('/stats').get(tc.getStats);
 
-tourRouter.route('/plans/:year').get(tc.getPlan);
+tourRouter
+    .route('/plans/:year')
+    .get(ac.protect, ac.restrictTo('admin', 'lead-guide', 'guide'), tc.getPlan);
 
-tourRouter.route(`/`).get(ac.protect, tc.getAllTours).post(tc.createTour);
+tourRouter
+    .route(`/`)
+    .get(tc.getAllTours)
+    .post(ac.protect, ac.restrictTo('admin', 'lead-guide'), tc.createTour);
 tourRouter
     .route(`/:id`)
     .get(tc.getTourById)
-    .patch(tc.updateTour)
+    .patch(ac.protect, ac.restrictTo('admin', 'lead-guide'), tc.updateTour)
     .delete(ac.protect, ac.restrictTo('admin', 'lead-guide'), tc.deleteTour);
 
 export default tourRouter;

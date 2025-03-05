@@ -36,6 +36,7 @@ const tourSchema = new mongoose.Schema(
             default: 4.5,
             min: 1,
             max: 5,
+            set: (val) => Math.round(val * 10) / 10,
         },
         ratingsQuantity: {
             type: Number,
@@ -132,6 +133,9 @@ const tourSchema = new mongoose.Schema(
         toObject: { virtuals: true },
     }
 );
+
+// indexes are saved on the database to make query time faster
+tourSchema.index({ price: 1, ratingsAverage: -1 });
 
 // Runs before any document is saved ie .save() and .create()
 tourSchema.pre('save', function (next) {

@@ -2,19 +2,19 @@ import catchAsync from '../utils/catchAsync.js';
 import AppError from '../utils/AppError.js';
 import APIFeatures from '../utils/APIFeatures.js';
 
-export const readAll = (Model, filter) =>
+export const readAll = (Model) =>
     catchAsync(async (req, res, next) => {
-        let query;
+        // (hack) workaround for getting reviews for a specific tour
+        const tourId = req.params.tourId;
+        let filter = {};
+        if (tourId) filter = { tour: tourId };
+        //
 
-        if (filter) {
-            query = new APIFeatures(req.query, Model.find(filter))
-                .filter()
-                .sort()
-                .limit()
-                .paginate().query;
-        } else query = Model.find();
-
-        const doc = await query;
+        const doc = await new APIFeatures(req.query, Model.find(filter))
+            .filter()
+            .sort()
+            .limit()
+            .paginate().query;
 
         res.json({
             status: 'success',
@@ -23,27 +23,9 @@ export const readAll = (Model, filter) =>
         });
     });
 
-// catchAsync(async (req, res, next) => {
-//     const tourId = req.params.tourId;
-//     let filter = {};
-//     if (tourId) filter = { tour: tourId };
-
-//     const reviews = await new APIFeatures(req.query, Review.find(filter))
-//         .filter()
-//         .sort()
-//         .limit()
-//         .paginate().query;
-
-//     res.json({
-//         status: 'success',
-//         results: reviews.length,
-//         reviews,
-//     });
-// });
-
 export const readOne = (Model, popOptions) =>
     catchAsync(async (req, res, next) => {
-        const query = Model.findById(req.params.id);
+        let query = Model.findById(req.params.id);
         if (popOptions) query = query.populate(popOptions);
 
         const doc = await query;
@@ -64,7 +46,7 @@ export const deleteOne = (Model) =>
 
         res.status(204).json({
             status: 'success',
-            message: 'tour deleted',
+            message: 'data deleted',
         });
     });
 
