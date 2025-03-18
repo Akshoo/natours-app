@@ -136,6 +136,8 @@ const tourSchema = new mongoose.Schema(
 
 // indexes are saved on the database to make query time faster
 tourSchema.index({ price: 1, ratingsAverage: -1 });
+tourSchema.index({ slug: 1});
+tourSchema.index({ startLocation: '2dsphere'});
 
 // Runs before any document is saved ie .save() and .create()
 tourSchema.pre('save', function (next) {
@@ -162,12 +164,12 @@ tourSchema.pre(/^find/, function (next) {
 });
 
 // AGGREGATE middleware
-tourSchema.pre('aggregate', function (next) {
-    this.pipeline().unshift({
-        $match: { secret: { $ne: true } },
-    });
-    next();
-});
+// tourSchema.pre('aggregate', function (next) {
+//     this.pipeline().unshift({
+//         $match: { secret: { $ne: true } },
+//     });
+//     next();
+// });
 
 const Tour = mongoose.model('tour', tourSchema);
 export default Tour;

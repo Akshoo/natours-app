@@ -1,6 +1,7 @@
 import catchAsync from '../utils/catchAsync.js';
 import Tour from '../models/tourModel.js';
 import { readAll, readOne, deleteOne, updateOne, createOne } from './handlerFactory.js';
+import AppError from '../utils/AppError.js';
 
 export const topCheapAlias = (req, res, next) => {
     req.query.limit = '5';
@@ -18,6 +19,58 @@ export const getTourById = readOne(Tour, {
 export const createTour = createOne(Tour);
 export const updateTour = updateOne(Tour);
 export const deleteTour = deleteOne(Tour);
+
+export const toursWithin = catchAsync(async function (req, res) {
+    const distance = req.params.distance;
+    const radius = req.params.unit === 'km' ? distance / 6378 : distance / 3963;
+    const [lat, lng] = req.params.centre.split(',');
+
+    if (!lat || lng)
+        new AppError('Please provide latitude and longitude as lat,lng', 400);
+
+    const tours = await Tour.find({
+        startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radius] } },
+    });
+
+    res.status(200).json({
+        status: 'success',
+        results: tours.length,
+        data: tours,
+    });
+});
+
+export const getDistance = catchAsync(async function (req, res) {
+    const { unit } = req.params;
+    const [lat, lng] = req.params.latlng.split(',');
+    const multiplier = unit === 'km' ? 6378 : 3963;
+    // const multiplier = 1;
+
+    if (!lat || lng)
+        new AppError('Please provide latitude and longitude as lat,lng', 400);
+
+    const distances = await Tour.aggregate([
+        {
+            $geoNear: {
+                near: [+lng, +lat],
+                distanceField: 'distance',
+                distanceMultiplier: multiplier,
+                spherical: true,
+            },
+        },
+        {
+            $project: {
+                name: 1,
+                distance: 1,
+            },
+        },
+    ]);
+
+    res.status(200).json({
+        status: 'success',
+        results: distances.length,
+        data: distances,
+    });
+});
 
 // Aggregation pipeline controller functions
 export const getStats = catchAsync(async function (req, res) {

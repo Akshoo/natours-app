@@ -8,15 +8,11 @@ const sendErrorRespDev = function (err, res) {
         stack: err.stack,
     });
 };
-const handleInvalidId = (err) =>
-    new AppError(`Tour id: ${err.value} is invalid`, 400);
+const handleInvalidId = (err) => new AppError(`Tour id: ${err.value} is invalid`, 400);
 
 const handleValidationError = (err) => new AppError(err.message, 400);
 const handleDupKeyError = (err) =>
-    new AppError(
-        `Field value ${err.message.match(/"(.*?)"/g)} must be unique`,
-        400
-    );
+    new AppError(`Field value ${err.message.match(/"(.*?)"/g)} must be unique`, 400);
 const handleJWTExpiredError = (err) =>
     new AppError('Token expired, Please login again', 401);
 
@@ -40,7 +36,7 @@ const sendErrorRespProd = function (err, res) {
 
 const globalErrorController = (err, req, res, next) => {
     const nodeEnv = process.env.NODE_ENV || 'dev';
-    // console.log('here 💥💥💥💥💥', err.message);
+    console.log('here 💥💥💥💥💥', err.message);
     // console.dir(nodeEnv);
     if (nodeEnv == 'dev') sendErrorRespDev(err, res);
     if (nodeEnv == 'prod') {
@@ -49,8 +45,7 @@ const globalErrorController = (err, req, res, next) => {
         if (err.name == 'ValidationError') error = handleValidationError(err);
         if (err.code == 11000) error = handleDupKeyError(err);
         if (err.name == 'TokenExpiredError') error = handleJWTExpiredError(err);
-        if (err.name == 'JsonWebTokenError')
-            error = handleInvalidTokenError(err);
+        if (err.name == 'JsonWebTokenError') error = handleInvalidTokenError(err);
         sendErrorRespProd(error, res);
     }
 };

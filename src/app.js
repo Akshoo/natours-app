@@ -28,16 +28,22 @@ const limiter = rateLimit({
 
 const app = express();
 
-// MIDDLEWARES
+// GLOBAL MIDDLEWARES
 app.use(express.json({ limit: '10kb' }));
 app.use(ExpressMongoSanitize());
 app.use(xss());
 app.use(morgan('dev'));
 app.use(express.static(`${__dirname}/../public`));
+app.set('view engine', 'pug');
+app.set('views', `${__dirname}/views`)
 app.use(helmet());
 app.use(`${BASE_URL}`, limiter);
 
 // ROUTES
+
+// app.use('/', (req, res)=>{
+//     res.status(200).render()
+// })
 app.use(`${BASE_URL}/tours`, tourRouter);
 app.use(`${BASE_URL}/users`, userRouter);
 app.use(`${BASE_URL}/reviews`, reviewRouter);

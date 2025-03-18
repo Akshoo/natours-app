@@ -25,4 +25,9 @@ tourRouter
     .patch(ac.protect, ac.restrictTo('admin', 'lead-guide'), tc.updateTour)
     .delete(ac.protect, ac.restrictTo('admin', 'lead-guide'), tc.deleteTour);
 
+tourRouter
+    .route('/tours-within/distance/:distance/centre/:centre/unit/:unit')
+    .get(tc.toursWithin);
+
+tourRouter.route('/distance/:latlng/unit/:unit').get(tc.getDistance)
 export default tourRouter;
