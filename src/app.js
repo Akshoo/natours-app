@@ -10,6 +10,7 @@ import globalErrorController from './controllers/globalErrorController.js';
 import tourRouter from './routes/tourRoutes.js';
 import userRouter from './routes/userRoutes.js';
 import reviewRouter from './routes/reviewRoutes.js';
+import viewRouter from './routes/viewRoutes.js';
 
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -35,18 +36,15 @@ app.use(xss());
 app.use(morgan('dev'));
 app.use(express.static(`${__dirname}/../public`));
 app.set('view engine', 'pug');
-app.set('views', `${__dirname}/views`)
+app.set('views', `${__dirname}/views`);
 app.use(helmet());
 app.use(`${BASE_URL}`, limiter);
 
 // ROUTES
-
-// app.use('/', (req, res)=>{
-//     res.status(200).render()
-// })
 app.use(`${BASE_URL}/tours`, tourRouter);
 app.use(`${BASE_URL}/users`, userRouter);
 app.use(`${BASE_URL}/reviews`, reviewRouter);
+app.use('/', viewRouter);
 
 // Handling ALL unhandled Routes
 app.all('*', (req, res, next) => {
