@@ -60,6 +60,10 @@ const tourSchema = new mongoose.Schema(
             type: String,
             trim: true,
         },
+        description: {
+            type: String,
+            required: [true, 'A tour must have a description'],
+        },
         imageCover: {
             type: String,
             required: [true, 'A tour must have an image'],
@@ -136,8 +140,8 @@ const tourSchema = new mongoose.Schema(
 
 // indexes are saved on the database to make query time faster
 tourSchema.index({ price: 1, ratingsAverage: -1 });
-tourSchema.index({ slug: 1});
-tourSchema.index({ startLocation: '2dsphere'});
+tourSchema.index({ slug: 1 });
+tourSchema.index({ startLocation: '2dsphere' });
 
 // Runs before any document is saved ie .save() and .create()
 tourSchema.pre('save', function (next) {
@@ -152,7 +156,7 @@ tourSchema.pre('save', function (next) {
 //populating guides in tours
 tourSchema.pre(/^find/, function (next) {
     if (!this._fields || 'guides' in this._fields)
-        this.populate({ path: 'guides', select: 'name photo email' });
+        this.populate({ path: 'guides', select: 'name photo email role' });
 
     next();
 });

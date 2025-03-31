@@ -10,8 +10,8 @@ import Review from '../models/reviewModel.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const Model = Review;
-const path = `${__dirname}/../../dev-data/data/reviews.json`;
+const Model = Tour;
+const path = `${__dirname}/../../dev-data/data/tours.json`;
 
 const docs = JSON.parse(fs.readFileSync(path, 'utf8'));
 
