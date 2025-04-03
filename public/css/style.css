@@ -1408,3 +1408,8 @@ body {
   -webkit-transform: translateY(-2px);
   transform: translateY(-2px);
 }
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  font-size: small !important;
+}

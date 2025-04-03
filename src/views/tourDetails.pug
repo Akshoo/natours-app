@@ -1,5 +1,11 @@
 extends _base
 
+block append head 
+  meta( http-equiv="Content-Security-Policy" content="script-src 'self' https://unpkg.com; style-src 'self' https://unpkg.com;")
+  link( rel= 'stylesheet' href= 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css' )
+  script( src= 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js' type='module' integrity='sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=' defer='true')
+  script( src='/js/mapbox.js' type='module' defer='true')
+
 mixin overviewBox(icon, label, value)
   .overview-box__detail
     svg.overview-box__icon
@@ -57,7 +63,7 @@ block main
         img.picture-box__img(class=`picture-box__img--${i+1}` src=`/img/tours/${image}` alt=`${tour.name} Tour`)
 
   section.section-map
-    #map
+    #map(data-locations=JSON.stringify(tour.locations))
 
   section.section-reviews
     .reviews
@@ -79,8 +85,8 @@ block main
     .cta
       .cta__img.cta__img--logo
         img(src='/img/logo-white.png' alt='Natours logo')
-      img.cta__img.cta__img--1(src=`/img/tours/${tour.images[2]}` alt='Tour image')
-      img.cta__img.cta__img--2(src=`/img/tours/${tour.images[3]}` alt='Tour image')
+      img.cta__img.cta__img--1(src=`/img/tours/${tour.images[1]}` alt='Tour image')
+      img.cta__img.cta__img--2(src=`/img/tours/${tour.images[2]}` alt='Tour image')
       .cta__content
         h2.heading-secondary What are you waiting for?
         p.cta__text #{tour.duration} days. 1 adventure. Infinite memories. Make it yours today!

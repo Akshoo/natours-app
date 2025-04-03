@@ -37,7 +37,7 @@ app.use(morgan('dev'));
 app.use(express.static(`${__dirname}/../public`));
 app.set('view engine', 'pug');
 app.set('views', `${__dirname}/views`);
-app.use(helmet());
+// app.use(helmet());
 app.use(`${BASE_URL}`, limiter);
 
 // ROUTES

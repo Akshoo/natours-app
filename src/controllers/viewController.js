@@ -14,7 +14,5 @@ export const getTourDetails = catchAsync(async (req, res) => {
         fields: 'user rating description',
     });
 
-    console.log(tour);
-    console.log(tour.reviews);
     res.status(200).render('tourDetails', { title: tour.name, tour });
 });
