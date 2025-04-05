@@ -4,7 +4,6 @@
 // Terrain View: googleTerrain = L.tileLayer('http://{s}.google.com/vt?lyrs=p&x={x}&y={y}&z={z}', { maxZoom: 20, subdomains: ['mt0', 'mt1', 'mt2', 'mt3'] });
 
 const locations = JSON.parse(document.querySelector('#map').dataset.locations);
-console.log(locations);
 
 const map = L.map('map', {
     scrollWheelZoom: false, // Disables zooming with the mouse wheel

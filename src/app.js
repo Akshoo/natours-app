@@ -4,6 +4,7 @@ import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import ExpressMongoSanitize from 'express-mongo-sanitize';
 import xss from 'xss-clean';
+import cookieParser from 'cookie-parser';
 
 import AppError from './utils/AppError.js';
 import globalErrorController from './controllers/globalErrorController.js';
@@ -38,6 +39,7 @@ app.use(express.static(`${__dirname}/../public`));
 app.set('view engine', 'pug');
 app.set('views', `${__dirname}/views`);
 // app.use(helmet());
+app.use(cookieParser());
 app.use(`${BASE_URL}`, limiter);
 
 // ROUTES

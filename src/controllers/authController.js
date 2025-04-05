@@ -22,7 +22,7 @@ const signJWT = async (data) => {
     });
 };
 
-const verifyJWT = async (token) => {
+export const verifyJWT = async (token) => {
     return new Promise((resolve, reject) => {
         jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
             if (err) reject(err);
@@ -52,8 +52,11 @@ const createAndSendJWT = async (data, res, user) => {
 export const protect = catchAsync(async (req, res, next) => {
     let token;
     // 1) check if token is present
+    // --Check for API call
     if (req.headers.authorization?.startsWith('Bearer'))
         token = req.headers.authorization.split(' ')[1];
+    // --Check for website call
+    else if (req.cookies.jwt) token = req.cookies.jwt;
 
     if (!token)
         return next(new AppError('Must be Logged in to access this resource', 401));
@@ -74,6 +77,20 @@ export const protect = catchAsync(async (req, res, next) => {
 
     // Grant access after all checks
     req.currentUser = user;
+    next();
+});
+
+export const isLoggedIn = catchAsync(async function (req, res, next) {
+    const { jwt } = req.cookies;
+    if (!jwt) return next();
+    const { id: userid } = await verifyJWT(jwt);
+
+    const user = await User.findById(userid);
+    if (!user) return next(new AppError('The user of this token does not exists'));
+
+    req.currentUser = user;
+    res.locals.user = user;
+    console.log(req.currentUser);
     next();
 });
 
