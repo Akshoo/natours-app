@@ -1413,3 +1413,7 @@ body {
 .leaflet-popup-tip {
   font-size: small !important;
 }
+
+.leaflet-top .leaflet-control {
+  margin-top: 150px !important;
+}

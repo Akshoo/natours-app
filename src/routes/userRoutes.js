@@ -9,6 +9,7 @@ userRouter
 
 userRouter.route('/signup').post(ac.signup);
 userRouter.route('/login').post(ac.login);
+userRouter.route('/logout').get(ac.logout);
 
 userRouter.route('/forgotPassword').post(ac.forgotPassword);
 userRouter.route('/resetPassword/:passResetToken').patch(ac.resetPassword);
