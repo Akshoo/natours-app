@@ -20,18 +20,19 @@ const __dirname = dirname(__filename);
 
 const BASE_URL = '/api/v1';
 const limiter = rateLimit({
-    windowMs: 1 * 60 * 60 * 1000, // 1 hour
-    limit: 100,
-    message: {
-        status: 'fail',
-        message: 'Too many requests, try again after an hour...',
-    },
+	windowMs: 1 * 60 * 60 * 1000, // 1 hour
+	limit: 100,
+	message: {
+		status: 'fail',
+		message: 'Too many requests, try again after an hour...',
+	},
 });
 
 const app = express();
 
 // GLOBAL MIDDLEWARES
 app.use(express.json({ limit: '10kb' }));
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(ExpressMongoSanitize());
 app.use(xss());
 app.use(morgan('dev'));
@@ -50,8 +51,8 @@ app.use('/', viewRouter);
 
 // Handling ALL unhandled Routes
 app.all('*', (req, res, next) => {
-    const err = new AppError(`Cannot find ${req.url} on the server.`, 404);
-    next(err);
+	const err = new AppError(`Cannot find ${req.url} on the server.`, 404);
+	next(err);
 });
 
 app.use(globalErrorController);

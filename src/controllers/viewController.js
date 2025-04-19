@@ -1,4 +1,5 @@
 import Tour from '../models/tourModel.js';
+import User from '../models/userModel.js';
 import AppError from '../utils/AppError.js';
 import catchAsync from '../utils/catchAsync.js';
 
@@ -28,5 +29,30 @@ export const getTourDetails = catchAsync(async function (req, res, next) {
 export const getLogin = catchAsync(async function (req, res) {
 	res.status(200).render('login', {
 		title: 'Login to Natours',
+	});
+});
+
+export const getMe = function (req, res, next) {
+	res.status(200).render('account', {
+		title: 'Account',
+	});
+};
+
+export const updateUserDetails = catchAsync(async function (req, res, next) {
+	const updatedUser = await User.findByIdAndUpdate(
+		req.currentUser.id,
+		{
+			name: req.body.name,
+			email: req.body.email,
+		},
+		{
+			new: true,
+			runValidators: true,
+		}
+	);
+
+	res.status(200).render('account', {
+		title: 'Account',
+		user: updatedUser,
 	});
 });

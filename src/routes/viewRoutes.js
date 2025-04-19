@@ -4,6 +4,10 @@ import * as ac from '../controllers/authController.js';
 
 const viewRouter = express.Router();
 
+viewRouter.route('/me').get(ac.protect, vc.getMe);
+// Update user details is also implemented via client side js script thus this is basically useless
+viewRouter.route('/update-user-form-data').post(ac.protect, vc.updateUserDetails);
+
 viewRouter.use(ac.isLoggedIn);
 
 viewRouter.route('/').get(vc.getOverview);

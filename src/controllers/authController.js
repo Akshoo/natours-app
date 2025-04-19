@@ -72,6 +72,7 @@ export const protect = catchAsync(async (req, res, next) => {
 
 	// Grant access after all checks
 	req.currentUser = user;
+	res.locals.user = user;
 	next();
 });
 
