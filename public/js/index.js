@@ -17,12 +17,11 @@ const updateUrl = '/api/v1/users/updateMe';
 const updatePasswordUrl = '/api/v1/users/updateMyPassword';
 
 if (loginForm)
-	loginForm.addEventListener('submit', async function (el) {
-		el.preventDefault();
+	loginForm.addEventListener('submit', async function (ev) {
+		ev.preventDefault();
 		const email = document.querySelector('#email').value;
 		const password = document.querySelector('#password').value;
 		try {
-			// await loginUser(email, password, loginUrl);
 			await fetchRequest(loginUrl, { email, password }, 'POST');
 			setTimeout(() => {
 				location.assign('/');
@@ -34,8 +33,8 @@ if (loginForm)
 	});
 
 if (logoutBtn)
-	logoutBtn.addEventListener('click', async function (el) {
-		el.preventDefault();
+	logoutBtn.addEventListener('click', async function (ev) {
+		ev.preventDefault();
 		try {
 			const res = await fetchRequest(logoutUrl);
 			showAlert('success', res.message);
@@ -49,19 +48,25 @@ if (logoutBtn)
 	});
 
 if (updateUserForm)
-	updateUserForm.addEventListener('submit', async function (el) {
-		el.preventDefault();
-		const name = updateUserForm.querySelector('#name').value;
-		const email = updateUserForm.querySelector('#email').value;
+	updateUserForm.addEventListener('submit', async function (ev) {
+		ev.preventDefault();
+
+		const formData = new FormData(updateUserForm);
+		
 
 		try {
-			// const res = await updateUser(name, email, updateUrl);
-			const res = await fetchRequest(updateUrl, { name, email }, 'PATCH');
+			// const res = await fetchRequest(updateUrl, formData, 'PATCH');
+			const res = await (
+				await fetch(updateUrl, {
+					method: 'PATCH',
+					body: formData,
+				})
+			).json();
 			showAlert('success', res.message);
 			setTimeout(() => location.reload(), 1000);
 		} catch (err) {
 			showAlert('error', err);
-			console.log(err);
+			// console.log(err);
 		}
 	});
 

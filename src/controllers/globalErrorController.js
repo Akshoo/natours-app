@@ -4,6 +4,7 @@ const sendErrorRespDev = function (err, req, res) {
 	// A) Dev Api error
 	if (req.originalUrl.startsWith('/api')) {
 		console.error('Dev Api Error 💥💥');
+		// console.log(!err.isOperational ? err : '');
 		console.log(err);
 		return res.status(err.statusCode || 500).json({
 			status: err.status || 'error',
@@ -15,6 +16,7 @@ const sendErrorRespDev = function (err, req, res) {
 
 	// B) Dev Website error
 	console.error('Dev Website Error 💥💥');
+	// console.log(!err.isOperational ? err : '');
 	console.log(err);
 	return res.status(500).render('error', {
 		title: 'Something went wrong...',

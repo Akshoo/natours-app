@@ -1,11 +1,9 @@
 import express from 'express';
 import * as uc from '../controllers/userController.js';
 import * as ac from '../controllers/authController.js';
+
 const userRouter = express.Router();
-userRouter
-    .route(`/`)
-    .get(ac.protect, ac.restrictTo('admin'), uc.getAllUsers)
-    .post(uc.createUser);
+userRouter.route(`/`).get(ac.protect, ac.restrictTo('admin'), uc.getAllUsers).post(uc.createUser);
 
 userRouter.route('/signup').post(ac.signup);
 userRouter.route('/login').post(ac.login);
@@ -18,7 +16,7 @@ userRouter.route('/resetPassword/:passResetToken').patch(ac.resetPassword);
 userRouter.use(ac.protect);
 
 userRouter.route('/me').get(uc.getMe, uc.getUserById);
-userRouter.route('/updateMe').patch(uc.updateMe);
+userRouter.route('/updateMe').patch(uc.uploadUserPhoto, uc.resizeUserPhoto, uc.updateMe);
 userRouter.route('/deleteMe').delete(uc.deleteMe);
 userRouter.route('/updateMyPassword').patch(ac.updatePassword);
 

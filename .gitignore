@@ -1,6 +1,7 @@
 node_modules
 .parcel-cache
 /public/index.js
+/public/img
 index.js.map
 .env
 .prettierrc
