@@ -31,7 +31,7 @@ export const uploadUserPhoto = multer({
 	storage: multerStorage,
 	fileFilter: multerFilter,
 }).single('photo');
-export const resizeUserPhoto = (req, res, next) => {
+export const resizeUserPhoto = catchAsync(async function (req, res, next){
 	if (!req.file) return next();
 
 	const user = req.currentUser;
@@ -39,14 +39,14 @@ export const resizeUserPhoto = (req, res, next) => {
 
 	// defining req.file.filename for later use in updateMe middleware
 	req.file.filename = `user-${uniqueSuffix}.jpeg`;
-	sharp(req.file.buffer)
+	await sharp(req.file.buffer)
 		.resize(500, 500)
 		.toFormat('jpeg')
 		.jpeg({ quality: 90 })
 		.toFile(`public/img/users/${req.file.filename}`);
 
 	next();
-};
+});
 
 export const getMe = (req, res, next) => {
 	req.params.id = req.currentUser.id;
@@ -64,18 +64,16 @@ export const createUser = (req, res, next) => {
 };
 
 export const updateMe = catchAsync(async (req, res, next) => {
-	console.log('here  you little duck');
 	const user = req.currentUser;
 
 	// if user tries to change password then warn
 	if (req.body.password || req.body.passwordConfirm)
 		return next(new AppError('Cannot change password on this route', 400));
 
-	console.log('UPDATE PHOTO', req.body, req.file);
+	// console.log('UPDATE PHOTO', req.body, req.file);
 	// sanitize request
 	const updatedUserObj = filterObj(req.body, 'name', 'email');
 	if (req.file) updatedUserObj.photo = req.file.filename;
-	console.log(updatedUserObj);
 
 	// actually update the user
 	const updatedUser = await User.findByIdAndUpdate(user.id, updatedUserObj, {

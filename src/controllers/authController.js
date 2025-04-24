@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
-import sendEmail from '../utils/email.js';
+import Email from '../utils/email.js';
 import catchAsync from '../utils/catchAsync.js';
 import AppError from '../utils/AppError.js';
 import User from '../models/userModel.js';
@@ -108,7 +108,9 @@ export const signup = catchAsync(async (req, res, next) => {
 	const newUserObj = filterObj(req.body, 'name', 'email', 'password', 'passwordConfirm');
 	const newUser = await User.create(newUserObj);
 
-	newUser.password = undefined;
+	const url = `${req.protocol}://${req.hostname}:${process.env.PORT}/`;
+	await new Email(newUser, url).sendWelcome();
+
 	await createAndSendJWT({ id: newUser._id }, res, newUser);
 });
 
@@ -151,11 +153,12 @@ export const forgotPassword = catchAsync(async (req, res, next) => {
 	const resetUrl = `${req.protocol}://${req.hostname}:${process.env.PORT}/resetPassword/${resetToken}`;
 
 	try {
-		await sendEmail({
-			email: userEmail,
-			subject: 'Password reset token, valid for 10 minutes',
-			message: `Forgot your password..., submit a PATCH request at \n ${resetUrl} \n with your new password and passwordConfirm. \nIf you didn't forget your password, then please ignore this email`,
-		});
+		await new Email(user, resetUrl).sendPasswordReset();
+		// await sendEmail({
+		// 	email: userEmail,
+		// 	subject: 'Password reset token, valid for 10 minutes',
+		// 	message: `Forgot your password..., submit a PATCH request at \n ${resetUrl} \n with your new password and passwordConfirm. \nIf you didn't forget your password, then please ignore this email`,
+		// });
 
 		res.status(200).json({
 			status: 'success',
