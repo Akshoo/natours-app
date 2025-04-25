@@ -16,7 +16,14 @@ class Email {
 	createEmailTransport() {
 		const nodeEnv = process.env.NODE_ENV || 'dev';
 		if (nodeEnv === 'prod') {
-			return 1;
+			return nodemailer.createTransport({
+				host: process.env.EMAIL_HOST_PROD,
+				port: process.env.EMAIL_PORT_PROD,
+				auth: {
+					user: process.env.EMAIL_USER_PROD,
+					pass: process.env.EMAIL_PASS_PROD,
+				},
+			});
 		}
 		return nodemailer.createTransport({
 			host: process.env.EMAIL_HOST,
@@ -30,10 +37,10 @@ class Email {
 	async send(template, subject) {
 		const templatePath = path.join(`${__dirname}`, `/../views/${template}.pug`);
 		const html = renderFile(templatePath, {
-            firstname: this.firstname,
-            url: this.url,
-            subject,
-        });
+			firstname: this.firstname,
+			url: this.url,
+			subject,
+		});
 
 		const mailOptions = {
 			from: this.from,
@@ -48,32 +55,8 @@ class Email {
 	async sendWelcome() {
 		await this.send('emailWelcome', 'Welcome to the Natours Family');
 	}
-    async sendPasswordReset(){
-        await this.send('emailPasswordReset', 'Password reset token, valid for 10 minutes');
-    }
+	async sendPasswordReset() {
+		await this.send('emailPasswordReset', 'Password reset token, valid for 10 minutes');
+	}
 }
-
-const sendEmail = async (options) => {
-	// create a transporter
-	const transporter = nodemailer.createTransport({
-		host: process.env.EMAIL_HOST,
-		port: process.env.EMAIL_PORT,
-		auth: {
-			user: process.env.EMAIL_USER,
-			pass: process.env.EMAIL_PASS,
-		},
-	});
-	// define email options
-	const mailOptions = {
-		from: process.env.EMAIL_FROM,
-		to: options.email,
-		subject: options.subject,
-		text: options.message,
-		// html:
-	};
-	// actually send email
-	await transporter.sendMail(mailOptions);
-};
-
-// export default sendEmail;
 export default Email;
