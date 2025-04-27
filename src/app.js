@@ -9,6 +9,7 @@ import cookieParser from 'cookie-parser';
 import AppError from './utils/AppError.js';
 import globalErrorController from './controllers/globalErrorController.js';
 import tourRouter from './routes/tourRoutes.js';
+import bookingRouter from './routes/bookingRoutes.js';
 import userRouter from './routes/userRoutes.js';
 import reviewRouter from './routes/reviewRoutes.js';
 import viewRouter from './routes/viewRoutes.js';
@@ -47,6 +48,7 @@ app.use(`${BASE_URL}`, limiter);
 app.use(`${BASE_URL}/tours`, tourRouter);
 app.use(`${BASE_URL}/users`, userRouter);
 app.use(`${BASE_URL}/reviews`, reviewRouter);
+app.use(`${BASE_URL}/bookings`, bookingRouter);
 app.use('/', viewRouter);
 
 // Handling ALL unhandled Routes

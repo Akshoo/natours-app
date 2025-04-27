@@ -4,17 +4,32 @@ import { fetchRequest } from './model';
 
 console.log('hello parcel you little duck');
 
+///////////////////////////////////////////////////////////////
+// DECLARATIONS
+
 const map = document.querySelector('#map');
-if (map) showMap();
 
 const loginForm = document.querySelector('.login-form');
-const logoutBtn = document.querySelector('.nav__el--logout');
-const updateUserForm = document.querySelector('.form-user-data');
-const updatePasswordForm = document.querySelector('.form-user-settings');
 const loginUrl = '/api/v1/users/login';
+
+const logoutBtn = document.querySelector('.nav__el--logout');
 const logoutUrl = '/api/v1/users/logout';
+
+const updateUserForm = document.querySelector('.form-user-data');
 const updateUrl = '/api/v1/users/updateMe';
+
+const updatePasswordForm = document.querySelector('.form-user-settings');
 const updatePasswordUrl = '/api/v1/users/updateMyPassword';
+
+const bookTourBtn = document.querySelector('.btn-book_tour');
+const bookTourUrl = bookTourBtn
+	? `/api/v1/bookings/checkout-session/${bookTourBtn.dataset.id}`
+	: null;
+
+/////////////////////////////////////////////////////////////////////////////////
+// LOGIC
+
+if (map) showMap();
 
 if (loginForm)
 	loginForm.addEventListener('submit', async function (ev) {
@@ -52,7 +67,6 @@ if (updateUserForm)
 		ev.preventDefault();
 
 		const formData = new FormData(updateUserForm);
-		
 
 		try {
 			// const res = await fetchRequest(updateUrl, formData, 'PATCH');
@@ -93,4 +107,16 @@ if (updatePasswordForm)
 			console.log(err);
 		}
 		saveBtn.textContent = 'Save Password';
+	});
+
+if (bookTourBtn)
+	bookTourBtn.addEventListener('click', async function (ev) {
+		try {
+			const { session } = await fetchRequest(bookTourUrl);
+			console.log(session);
+			// window.open(session.url);
+			// location.assign(session.url);
+		} catch (err) {
+			console.error(err);
+		}
 	});

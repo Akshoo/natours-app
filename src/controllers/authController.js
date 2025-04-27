@@ -76,22 +76,18 @@ export const protect = catchAsync(async (req, res, next) => {
 	next();
 });
 
-export const isLoggedIn = async function (req, res, next) {
-	try {
-		const { jwt } = req.cookies;
-		if (!jwt) return next();
-		const { id: userid } = await verifyJWT(jwt);
+export const isLoggedIn = catchAsync(async function (req, res, next) {
+	const { jwt } = req.cookies;
+	if (!jwt) return next();
+	const { id: userid } = await verifyJWT(jwt);
 
-		const user = await User.findById(userid);
-		if (!user) return next(new AppError('The user of this token does not exists'));
+	const user = await User.findById(userid);
+	if (!user) return next(new AppError('The user of this token does not exists'));
 
-		req.currentUser = user;
-		res.locals.user = user;
-		next();
-	} catch (err) {
-		next();
-	}
-};
+	req.currentUser = user;
+	res.locals.user = user;
+	next();
+});
 
 export const restrictTo = (...allowedRoles) => {
 	// this route must be protected
