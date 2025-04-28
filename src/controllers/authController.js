@@ -31,14 +31,14 @@ export const verifyJWT = async (token) => {
 	});
 };
 
-const createAndSendJWT = async (data, res, user) => {
+const createAndSendJWT = async (data, req, res, user) => {
 	const token = await signJWT(data);
 
 	res.cookie('jwt', token, {
 		httpOnly: true,
 		secret: true,
 		expires: new Date(Date.now() + process.env.JWT_EXPIRES_IN_INT * 24 * 60 * 60 * 1000),
-		secure: process.env.NODE_ENV == 'prod' ? true : undefined,
+		secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
 	});
 	res.status(200).json({
 		status: 'success',
@@ -107,7 +107,7 @@ export const signup = catchAsync(async (req, res, next) => {
 	const url = `${req.protocol}://${req.hostname}:${process.env.PORT}/`;
 	await new Email(newUser, url).sendWelcome();
 
-	await createAndSendJWT({ id: newUser._id }, res, newUser);
+	await createAndSendJWT({ id: newUser._id }, req, res, newUser);
 });
 
 export const login = catchAsync(async (req, res, next) => {
@@ -120,7 +120,7 @@ export const login = catchAsync(async (req, res, next) => {
 	if (!user || !(await user.correctPassword(password, user.password)))
 		return next(new AppError('Incorrect  Password or Username', 401));
 
-	await createAndSendJWT({ id: user._id }, res);
+	await createAndSendJWT({ id: user._id }, req, res);
 });
 
 export const logout = catchAsync(async function (req, res, next) {
@@ -195,7 +195,7 @@ export const resetPassword = catchAsync(async (req, res, next) => {
 	await user.save();
 
 	// send a jwt to log the user in
-	await createAndSendJWT({ id: user._id }, res);
+	await createAndSendJWT({ id: user._id }, req, res);
 });
 
 export const updatePassword = catchAsync(async (req, res, next) => {
@@ -220,5 +220,5 @@ export const updatePassword = catchAsync(async (req, res, next) => {
 	await user.save();
 
 	// send a jwt to log the user in
-	await createAndSendJWT({ id: user._id }, res);
+	await createAndSendJWT({ id: user._id }, req, res);
 });

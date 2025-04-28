@@ -2,6 +2,7 @@ import express from 'express';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
+import cors from 'cors'
 import compression from 'compression';
 import ExpressMongoSanitize from 'express-mongo-sanitize';
 import xss from 'xss-clean';
@@ -32,9 +33,12 @@ const limiter = rateLimit({
 });
 
 const app = express();
+app.enable('trust proxy');
 
 // GLOBAL MIDDLEWARES
-app.post('/webhook-checkout-payment', express.raw({type: 'application/json'}), bc.handleWebhook)
+app.post('/webhook-checkout-payment', express.raw({type: 'application/json'}), bc.handleWebhook);
+app.use(cors());
+app.options('*', cors);
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(ExpressMongoSanitize());
