@@ -14,6 +14,7 @@ import bookingRouter from './routes/bookingRoutes.js';
 import userRouter from './routes/userRoutes.js';
 import reviewRouter from './routes/reviewRoutes.js';
 import viewRouter from './routes/viewRoutes.js';
+import * as bc from './controllers/bookingController.js';
 
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -33,6 +34,7 @@ const limiter = rateLimit({
 const app = express();
 
 // GLOBAL MIDDLEWARES
+app.post('/webhook-checkout-payment', express.raw({type: 'application/json'}), bc.handleWebhook)
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(ExpressMongoSanitize());
