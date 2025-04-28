@@ -1,3 +1,4 @@
+import Booking from '../models/bookingModel.js';
 import Tour from '../models/tourModel.js';
 import User from '../models/userModel.js';
 import AppError from '../utils/AppError.js';
@@ -55,4 +56,14 @@ export const updateUserDetails = catchAsync(async function (req, res, next) {
 		title: 'Account',
 		user: updatedUser,
 	});
+});
+
+export const getMyBookings = catchAsync(async function (req, res, next) {
+	const user = req.currentUser;
+	const userBookings = await Booking.find().distinct('tour');
+	const tours = await Tour.find({ _id: { $in: userBookings } });
+
+	// if (tours.length == 0) throw new AppError('You havent booked any tour...', 404);
+
+	res.status(200).render('overview', { tours });
 });

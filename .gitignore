@@ -1,8 +1,8 @@
 node_modules
 .parcel-cache
-/public/index.js
+# /public/index.js
+# index.js.map
 /public/img
-index.js.map
 .env
 .prettierrc
 .eslintrc.json

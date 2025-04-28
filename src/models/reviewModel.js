@@ -78,7 +78,7 @@ reviewSchema.post('save', function (next) {
 
 reviewSchema.pre(/^findOneAnd/, async function (next) {
     this.rev = await this.model.findOne(this.getQuery());
-    console.log(this.getQuery());
+    // console.log(this.getQuery());
     next();
 });
 reviewSchema.post(/^findOneAnd/, async function () {

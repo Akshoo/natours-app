@@ -2,6 +2,7 @@ import express from 'express';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
+import compression from 'compression';
 import ExpressMongoSanitize from 'express-mongo-sanitize';
 import xss from 'xss-clean';
 import cookieParser from 'cookie-parser';
@@ -41,6 +42,7 @@ app.use(express.static(`${__dirname}/../public`));
 app.set('view engine', 'pug');
 app.set('views', `${__dirname}/views`);
 // app.use(helmet());
+app.use(compression())
 app.use(cookieParser());
 app.use(`${BASE_URL}`, limiter);
 

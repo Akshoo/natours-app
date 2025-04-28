@@ -1,6 +1,6 @@
 extends _base
 
-mixin navItem(icon, text, active, href)
+mixin navItem(icon, text, href, active)
 	li(class= active? 'side-nav--active' : '')
 		a(href= href || '#')
 			svg
@@ -12,8 +12,8 @@ block content
 		.user-view
 			nav.user-view__menu
 				ul.side-nav
-					+navItem('settings', 'Settings', true, '#')
-					+navItem('briefcase', 'My bookings')
+					+navItem('settings', 'Settings', '#', true)
+					+navItem('briefcase', 'My bookings', '/myBookings')
 					+navItem('star', 'My reviews')
 					+navItem('credit-card', 'Billing')
 

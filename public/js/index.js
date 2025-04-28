@@ -99,7 +99,7 @@ if (updatePasswordForm)
 				{ passwordCurrent, password, passwordConfirm },
 				'PATCH'
 			);
-			console.log('RESULT', res);
+			// console.log('RESULT', res);
 			showAlert('success', 'Password changed successfully');
 			setTimeout(() => location.reload(), 1000);
 		} catch (err) {
@@ -113,8 +113,8 @@ if (bookTourBtn)
 	bookTourBtn.addEventListener('click', async function (ev) {
 		try {
 			const { session } = await fetchRequest(bookTourUrl);
-			console.log(session);
-			// window.open(session.url);
+			// console.log(session);
+			window.open(session.url);
 			// location.assign(session.url);
 		} catch (err) {
 			console.error(err);

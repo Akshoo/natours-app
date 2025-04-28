@@ -34,7 +34,7 @@ export const resizeAndPopulateTourPhotos = async function (req, res, next) {
 	const mapFn = async function (file) {
 		const filename = `tour-${req.params.id}-${Date.now()}.jpeg`;
 		await save(file.buffer, filename);
-		console.log(file.originalname);
+		// console.log(file.originalname);
 		return filename;
 	};
 	req.body.images = await Promise.all(req.files.images.map(mapFn));
