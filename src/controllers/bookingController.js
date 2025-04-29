@@ -60,13 +60,12 @@ export const getCheckout = catchAsync(async function (req, res, next) {
 const handlePaymentSuccess = catchAsync(async (session) => {
 	// Create a booking if payment is successfull
 	const tour = session.client_reference_id;
-	const user = await User.find({ email: session.customer_email });
+	const [user] = await User.find({ email: session.customer_email });
 	const price = session.amount_total / 100;
-	console.log(session, tour, user, price);
 	if (!tour && !user && !price) return next();
-    
-	console.log(tour, user, price);
-	await Booking.create({ tour, price, user: user.id });
+
+	// console.log(tour, user, price);
+	await Booking.create({ tour, price, user: user._id });
 });
 export const getPaymentFail = (req, res, enxt) => {
 	next(AppError('Payment Failed...'));
@@ -78,11 +77,11 @@ export const handleWebhook = catchAsync(async function (req, res, next) {
 	let event = req.body;
 	try {
 		event = stripe.webhooks.constructEvent(req.body, signature, endpointSecret);
-		res.status(200).json({ recieved: true });
 
 		if (event.type == 'checkout.session.completed') {
 			handlePaymentSuccess(event.data.object);
 		}
+		res.status(200).json({ recieved: true });
 	} catch (err) {
 		console.log(`⚠️  Webhook signature verification failed.`, err.message);
 		return res.status(400).json({
