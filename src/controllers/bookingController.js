@@ -60,7 +60,7 @@ export const getCheckout = catchAsync(async function (req, res, next) {
 const handlePaymentSuccess = catchAsync(async (session) => {
 	// Create a booking if payment is successfull
 	const tour = session.client_reference_id;
-	const user = (await User.find({ email: session.customer_email }))._id;
+	const user = await User.find({ email: session.customer_email });
 	const price = session.amount_total / 100;
 	console.log(session, tour, user, price);
 	if (!tour && !user && !price) return next();
