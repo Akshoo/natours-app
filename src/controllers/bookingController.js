@@ -66,7 +66,7 @@ const handlePaymentSuccess = catchAsync(async (session) => {
 	if (!tour && !user && !price) return next();
     
 	console.log(tour, user, price);
-	await Booking.create({ tour, price, user });
+	await Booking.create({ tour, price, user: user.id });
 });
 export const getPaymentFail = (req, res, enxt) => {
 	next(AppError('Payment Failed...'));
