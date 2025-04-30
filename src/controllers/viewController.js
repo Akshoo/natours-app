@@ -66,8 +66,10 @@ export const updateUserDetails = catchAsync(async function (req, res, next) {
 
 export const getMyBookings = catchAsync(async function (req, res, next) {
 	const user = req.currentUser;
-	const userBookings = await Booking.find().distinct('tour');
+	const userBookings = await Booking.find({ user: user.id }).distinct('tour');
+	// const userBookings = await Booking.find({ id: user._id }).distinct('tour');
 	const tours = await Tour.find({ _id: { $in: userBookings } });
+	console.log(user, userBookings, tours);
 
 	// if (tours.length == 0) throw new AppError('You havent booked any tour...', 404);
 
