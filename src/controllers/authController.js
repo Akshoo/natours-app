@@ -63,7 +63,8 @@ export const protect = catchAsync(async (req, res, next) => {
 
 	// 3) Check if the user still exists
 	const user = await User.findById(decoded.id);
-	if (!user) return next(new AppError('The user of this token does not exists'));
+	if (!user)
+		return next(new AppError('The user of this token does not exists, Please Sign up', 404));
 
 	// 4) Check if user has changed password after acquiring token
 
@@ -82,10 +83,10 @@ export const isLoggedIn = catchAsync(async function (req, res, next) {
 	const { id: userid } = await verifyJWT(jwt);
 
 	const user = await User.findById(userid);
-	if (!user) return next(new AppError('The user of this token does not exists'));
+	// if (!user) return next(new AppError('The user of this token does not exists', 400));
 
-	req.currentUser = user;
-	res.locals.user = user;
+	req.currentUser = user || null;
+	res.locals.user = user || null;
 	next();
 });
 
@@ -109,7 +110,6 @@ export const signup = catchAsync(async (req, res, next) => {
 	// const url = `${req.protocol}://${req.hostname}:${process.env.PORT}/`;
 	const url = `${req.protocol}://${req.hostname}/`;
 	await new Email(newUser, url).sendWelcome();
-
 });
 
 export const login = catchAsync(async (req, res, next) => {
@@ -140,10 +140,10 @@ export const logout = catchAsync(async function (req, res, next) {
 
 export const forgotPassword = catchAsync(async (req, res, next) => {
 	const userEmail = req.body.email;
-	if (!userEmail) return next(new AppError('User email is required to reset password'));
+	if (!userEmail) return next(new AppError('User email is required to reset password', 400));
 
 	const user = await User.findOne({ email: userEmail });
-	if (!user) return next(new AppError('User not found, Please signup'));
+	if (!user) return next(new AppError('User not found, Please signup', 400));
 
 	const resetToken = await user.createPasswordResetToken();
 	await user.save({ validateBeforeSave: false });

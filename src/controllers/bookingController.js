@@ -68,7 +68,7 @@ const handlePaymentSuccess = catchAsync(async (session) => {
 	await Booking.create({ tour, price, user: user._id });
 });
 export const getPaymentFail = (req, res, enxt) => {
-	next(AppError('Payment Failed...'));
+	next(AppError('Payment Failed...', 400));
 };
 
 export const handleWebhook = catchAsync(async function (req, res, next) {

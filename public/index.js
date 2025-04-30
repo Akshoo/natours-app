@@ -697,8 +697,10 @@ if (signupForm) signupForm.addEventListener('submit', async function(ev) {
     const email = this.querySelector('#email').value;
     const password = this.querySelector('#password').value;
     const passwordConfirm = this.querySelector('#password-confirm').value;
+    const signupBtn = this.querySelector('.signup-btn');
+    signupBtn.textContent = 'Creating your account...';
     try {
-        const res = await (0, _model.fetchRequest)(signupUrl, {
+        await (0, _model.fetchRequest)(signupUrl, {
             name,
             email,
             password,
@@ -712,6 +714,7 @@ if (signupForm) signupForm.addEventListener('submit', async function(ev) {
         if (err.message.startsWith('E11000')) (0, _alert.showAlert)('error', 'User already exists... try Logging in');
         else (0, _alert.showAlert)('error', err.message);
     }
+    signupBtn.textContent = 'Signup';
 });
 if (loginForm) loginForm.addEventListener('submit', async function(ev) {
     ev.preventDefault();

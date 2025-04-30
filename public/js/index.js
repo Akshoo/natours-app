@@ -41,9 +41,11 @@ if (signupForm)
 		const email = this.querySelector('#email').value;
 		const password = this.querySelector('#password').value;
 		const passwordConfirm = this.querySelector('#password-confirm').value;
+		const signupBtn = this.querySelector('.signup-btn');
+		signupBtn.textContent = 'Creating your account...';
 
 		try {
-			const res = await fetchRequest(signupUrl, { name, email, password, passwordConfirm }, 'POST');
+			await fetchRequest(signupUrl, { name, email, password, passwordConfirm }, 'POST');
 			showAlert('success', 'Signed up successfully!!');
 			setTimeout(() => {
 				location.assign('/');
@@ -53,6 +55,7 @@ if (signupForm)
 				showAlert('error', 'User already exists... try Logging in');
 			else showAlert('error', err.message);
 		}
+		signupBtn.textContent = 'Signup';
 	});
 
 if (loginForm)
