@@ -27,6 +27,12 @@ export const getTourDetails = catchAsync(async function (req, res, next) {
 	});
 });
 
+export const getSignup = catchAsync(async function (req, res, next) {
+	res.status(200).render('signup', {
+		title: 'Signup to Natours',
+	});
+});
+
 export const getLogin = catchAsync(async function (req, res) {
 	res.status(200).render('login', {
 		title: 'Login to Natours',

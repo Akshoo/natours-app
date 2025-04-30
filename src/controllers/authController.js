@@ -103,11 +103,13 @@ export const restrictTo = (...allowedRoles) => {
 export const signup = catchAsync(async (req, res, next) => {
 	const newUserObj = filterObj(req.body, 'name', 'email', 'password', 'passwordConfirm');
 	const newUser = await User.create(newUserObj);
+	await createAndSendJWT({ id: newUser._id }, req, res, newUser);
 
-	const url = `${req.protocol}://${req.hostname}:${process.env.PORT}/`;
+	// port names are not available on render
+	// const url = `${req.protocol}://${req.hostname}:${process.env.PORT}/`;
+	const url = `${req.protocol}://${req.hostname}/`;
 	await new Email(newUser, url).sendWelcome();
 
-	await createAndSendJWT({ id: newUser._id }, req, res, newUser);
 });
 
 export const login = catchAsync(async (req, res, next) => {

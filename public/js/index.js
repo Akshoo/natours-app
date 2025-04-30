@@ -9,6 +9,9 @@ console.log('hello parcel you little duck');
 
 const map = document.querySelector('#map');
 
+const signupForm = document.querySelector('.signup-form');
+const signupUrl = 'api/v1/users/signup';
+
 const loginForm = document.querySelector('.login-form');
 const loginUrl = '/api/v1/users/login';
 
@@ -31,17 +34,38 @@ const bookTourUrl = bookTourBtn
 
 if (map) showMap();
 
-if (loginForm)
-	loginForm.addEventListener('submit', async function (ev) {
+if (signupForm)
+	signupForm.addEventListener('submit', async function (ev) {
 		ev.preventDefault();
-		const email = document.querySelector('#email').value;
-		const password = document.querySelector('#password').value;
+		const name = this.querySelector('#name').value;
+		const email = this.querySelector('#email').value;
+		const password = this.querySelector('#password').value;
+		const passwordConfirm = this.querySelector('#password-confirm').value;
+
 		try {
-			await fetchRequest(loginUrl, { email, password }, 'POST');
+			const res = await fetchRequest(signupUrl, { name, email, password, passwordConfirm }, 'POST');
+			showAlert('success', 'Signed up successfully!!');
 			setTimeout(() => {
 				location.assign('/');
 			}, 2000);
+		} catch (err) {
+			if (err.message.startsWith('E11000'))
+				showAlert('error', 'User already exists... try Logging in');
+			else showAlert('error', err.message);
+		}
+	});
+
+if (loginForm)
+	loginForm.addEventListener('submit', async function (ev) {
+		ev.preventDefault();
+		const email = this.querySelector('#email').value;
+		const password = this.querySelector('#password').value;
+		try {
+			await fetchRequest(loginUrl, { email, password }, 'POST');
 			showAlert('success', 'Logged in successfully');
+			setTimeout(() => {
+				location.assign('/');
+			}, 2000);
 		} catch (err) {
 			showAlert('error', err);
 		}

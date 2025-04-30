@@ -11,6 +11,7 @@ viewRouter.route('/update-user-form-data').post(ac.protect, vc.updateUserDetails
 viewRouter.use( ac.isLoggedIn);
 
 viewRouter.route('/').get(vc.getOverview);
+viewRouter.route('/signup').get(vc.getSignup);
 viewRouter.route('/myBookings').get(vc.getMyBookings);
 viewRouter.route('/tour/:slug').get(vc.getTourDetails);
 viewRouter.route('/login').get(vc.getLogin);
